@@ -122,6 +122,10 @@ BBB  发送QQ
 
 通过CAS操作完成自旋锁，A线程先进来调用myLock方法自己持有的锁5秒钟，B随后进来后发现当前有线程持有锁，不是null，所以只能通过自旋等待，直到A释放锁后B随后抢到。
 
+
+
+**手写一个简单的自旋锁**
+
 ```java
 //手写一个自旋锁
 public class SpinLock {
@@ -196,7 +200,167 @@ BBB  invoked myUnlock!!!
 | 读-写 | 阻塞 |
 | 写-写 | 阻塞 |
 
+案例：手写一个简单缓存
 
+```java
+class MyCache{
+   private volatile Map<String,Object>map = new HashMap<>();
+
+
+   public void put(String key,Object value){
+       System.out.println(Thread.currentThread().getName()+"  正在写入  "+key);
+       //线程休眠
+       try{ TimeUnit.MICROSECONDS.sleep(300); } catch (Exception e) { e.printStackTrace(); }
+       map.put(key,value);
+       System.out.println(Thread.currentThread().getName()+"  写入完成  ");
+
+   }
+
+   public void get(String key){
+       System.out.println(Thread.currentThread().getName()+"  正在读取  " );
+       try{ TimeUnit.MICROSECONDS.sleep(300); } catch (Exception e) { e.printStackTrace(); }
+       Object res = map.get(key);
+       System.out.println(Thread.currentThread().getName()+"  读取完成  "+res);
+
+   }
+
+
+}
+public class ReadWriteLock {
+    public static void main(String[] args) {
+        MyCache cache = new MyCache();
+        for (int i = 0; i < 5; i++) {
+            final int num = i;
+              new Thread(()->{
+                   cache.put(String.valueOf(num),num);
+              },"AAA"+i).start();
+            
+        }
+
+
+        for (int i = 0; i < 5; i++) {
+            final int num = i;
+            new Thread(()->{
+                cache.get(String.valueOf(num));
+            },"BBB"+i).start();
+
+        }
+    }
+}
+
+
+AAA1  正在写入  1
+BBB1  正在读取  
+AAA2  正在写入  2
+AAA1  写入完成  
+AAA0  正在写入  0
+AAA3  正在写入  3
+BBB0  正在读取  
+BBB3  正在读取  
+BBB4  正在读取  
+BBB2  正在读取  
+AAA4  正在写入  4
+AAA2  写入完成  
+BBB1  读取完成  1
+AAA0  写入完成  
+AAA4  写入完成  
+BBB2  读取完成  2
+AAA3  写入完成  
+BBB0  读取完成  0
+BBB4  读取完成  4
+BBB3  读取完成  null
+
+```
+
+java5以后提供ReentrantReadWriteLock读写锁
+
+```java
+
+class MyCache{
+   private volatile Map<String,Object>map = new HashMap<>();
+    //java5以后提供的读写锁
+   private ReentrantReadWriteLock rwLock =  new ReentrantReadWriteLock();
+
+
+   public void put(String key,Object value){
+       //加上写锁，互斥访问
+       rwLock.writeLock().lock();
+       try {
+           System.out.println(Thread.currentThread().getName()+"  正在写入  "+key);
+           //线程休眠
+           try{ TimeUnit.MICROSECONDS.sleep(300); } catch (Exception e) { e.printStackTrace(); }
+           map.put(key,value);
+           System.out.println(Thread.currentThread().getName()+"  写入完成  ");
+       }catch(Exception e) {
+           e.printStackTrace();
+       }finally {
+           rwLock.writeLock().unlock();
+       }
+       
+
+
+   }
+
+   public void get(String key){
+       //加上读锁可以共享读取
+       rwLock.readLock().lock();
+       try {
+           System.out.println(Thread.currentThread().getName()+"  正在读取  " );
+           try{ TimeUnit.MICROSECONDS.sleep(300); } catch (Exception e) { e.printStackTrace(); }
+           Object res = map.get(key);
+           System.out.println(Thread.currentThread().getName()+"  读取完成  "+res);
+       }catch(Exception e) {
+           e.printStackTrace();
+       }finally {
+           rwLock.readLock().unlock();
+       }
+
+   }
+
+
+}
+public class ReadWriteLock {
+    public static void main(String[] args) {
+        MyCache cache = new MyCache();
+        for (int i = 0; i < 5; i++) {
+            final int num = i;
+              new Thread(()->{
+                   cache.put(String.valueOf(num),num);
+              },"AAA"+i).start();
+            
+        }
+
+
+        for (int i = 0; i < 5; i++) {
+            final int num = i;
+            new Thread(()->{
+                cache.get(String.valueOf(num));
+            },"BBB"+i).start();
+
+        }
+    }
+}
+AAA0  正在写入  0
+AAA0  写入完成  
+BBB2  正在读取  
+BBB1  正在读取  
+BBB2  读取完成  null
+BBB1  读取完成  null
+AAA1  正在写入  1
+AAA1  写入完成  
+BBB4  正在读取  
+BBB4  读取完成  null
+AAA2  正在写入  2
+AAA2  写入完成  
+BBB3  正在读取  
+BBB3  读取完成  null
+AAA3  正在写入  3
+AAA3  写入完成  
+AAA4  正在写入  4
+AAA4  写入完成  
+BBB0  正在读取  
+BBB0  读取完成  0
+```
 
 
 
