@@ -1,8 +1,4 @@
-参考：
 
-https://www.jianshu.com/p/f74044782927
-
-https://www.cnblogs.com/dolphin0520/p/3920373.html
 
 # volatile
 
@@ -449,7 +445,11 @@ DDD 修改成功否 false
 
 ```
 
+>  参考资料
 
+https://www.jianshu.com/p/f74044782927
+
+https://www.cnblogs.com/dolphin0520/p/3920373.html
 
 
 

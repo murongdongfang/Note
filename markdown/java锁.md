@@ -1,6 +1,4 @@
-# 任何牛逼的人在成功之前一定有一段苦逼的岁月，但请你一定要像傻逼一样坚持，最后才能够装逼
-
-
+任何牛逼的人在成功之前一定有一段苦逼的岁月，但请你一定要像傻逼一样坚持，最后才能够装逼
 
 ## 公平锁和非公平锁
 
@@ -136,6 +134,7 @@ public class SpinLock {
     public void myLock(){
         Thread thread = Thread.currentThread();
         System.out.println(thread.currentThread().getName()+"  comming in 0(n_n)0");
+        //期望atomicReference是null，如果不是返回false，说明已经有其他线程获得了锁，当前线程只能循环等待其他线程释放锁，如果期望值和实际只相符合说明其他线程没有获取锁，当前线程获取锁。
         while (!atomicReference.compareAndSet(null,thread)){
 
         }
@@ -361,42 +360,6 @@ AAA4  写入完成
 BBB0  正在读取  
 BBB0  读取完成  0
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
