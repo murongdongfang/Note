@@ -288,7 +288,7 @@ public class ValatileDemo2 {
 
 ### CAS简介
 
-CAS的全称为Compare-And-Swap ，它是一条CPU并发原语，**它的功能是判断内存某个位置的值是否为预期值,如果是则更新为新的值，这个过程是原子的。**
+CAS的全称为Compare-And-Swap ，它是一条CPU并发原语，**它的功能是判断内存某个位置的值是否为预期值,如果是则更新为新的值，这个过程是原子的。**CAS有3个操作数，内存值V，旧的预期值A，要修改的新值B。当且仅当预期值A和内存值V相同时，将内存值V修改为B，否则什么都不做。
 
 
 
@@ -397,7 +397,7 @@ true  BBB  atomic value is 9999
 
 **ABA问题的解决**
 
-需要借助AtomicStampedReference类，解决方案类似于乐观锁的版本号机制。
+需要借助**AtomicStampedReference**类，解决方案类似于乐观锁的版本号机制。
 
 ```java
  public static void main(String[] args) throws Exception {
@@ -406,11 +406,14 @@ true  BBB  atomic value is 9999
      //线程CCC用于完成一次ABA操作，每做一次修改都会是版本号自增1
         new Thread(()->{
             int stamp = atomicStamp.getStamp();
-            System.out.println(Thread.currentThread().getName()+" 初始版本号："+stamp+"  初始值:"+atomicStamp.getReference());
+            System.out.println(Thread.currentThread().getName()
+                               +" 初始版本号："+stamp
+                               +"  初始值:"+atomicStamp.getReference());
 
             boolean b = atomicStamp.compareAndSet(10,100,atomicStamp.getStamp(),atomicStamp.getStamp()+1);
             System.out.println(Thread.currentThread().getName()+" 修改成功否 "+b);
             System.out.println(" 版本号2: "+atomicStamp.getStamp()+" value is "+atomicStamp.getReference());
+            
             boolean b1 = atomicStamp.compareAndSet(100,10,atomicStamp.getStamp(),atomicStamp.getStamp()+1);
             System.out.println(Thread.currentThread().getName()+" 修改成功否 "+b1);
             System.out.println(" 版本号3: "+atomicStamp.getStamp()+" value is "+atomicStamp.getReference());

@@ -1,51 +1,5 @@
 任何牛逼的人在成功之前一定有一段苦逼的岁月，但请你一定要像傻逼一样坚持，最后才能够装逼
 
-## Lock和synchronized的区别？
-
-1. 原始构成
-
-   synchronized是关键字属于JVM层面，monitorenter（底层是通过monitor对象来完成，其实wait/notify等方法也依赖于monify对象，只有在同步块或者同步方法中才能调用wait/notify等方法），monitorexit
-
-   lock是具体类(java.util.concurrent.locks.lock)是api层面的锁
-
-2. 使用方法
-
-   synchronized不需要用户手动释放锁，当synchronized代码执行完成后系统会自动让线程释放锁的占用
-
-   ReentrantLock则需要用户手动释放锁，若没有主动释放锁，就有可能造成死锁现象。需要lock() 和unlock()方法配合try/finally语句块来完成
-
-3. 等待是否可以中断
-
-   synchronized不可以中断，除非抛出异常或者正常运行结束。
-
-   ReentrantLock可以中断，中断方法
-
-   ​		1）设置超时方法tryLock(long timeout,TimeUnit unit)
-
-   ​		2）lockInterruptibly()放代码块中，调用lockInterruptibly()方法可以中断
-
-4. 加锁是否公平
-
-   synchronized是非公平锁，
-
-   ReentrantLock两者都可以，默认是非公平锁，可以设置参数为new ReentrantLock(true)变成公平锁
-
-5. 锁绑定多个Condition
-
-   synchronized不可以
-
-   ReentantLock用来实现分组唤醒需要唤醒的线程们，可以精确唤醒，而不是像synchronized要么随机唤醒一个线程要么唤醒全部线程。
-   
-   
-   
-   
-
-
-
-
-
-
-
 ## 公平锁和非公平锁
 
 公平锁：多个线程按照申请锁的顺序来获取锁，类似于队列先进先出
