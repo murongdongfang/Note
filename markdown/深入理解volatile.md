@@ -101,7 +101,7 @@ x++;           //语句3
 x = x + 1;     //语句4
 ```
 
-以上4个语句中只有语句1是原子操作，其他的都不是原子操作，一般只有单个的读取和常量赋值操作才是原子操作。
+以上4个语句中只有语句1是原子操作，其他的都不是原子操作，**一般只有单个的读取和常量赋值操作才是原子操作。**
 
 
 
@@ -354,7 +354,7 @@ public final class Unsafe {
 
 ABA问题：CAS算法实现一个重要前提需要提取出内存中某个时刻的数据并在当下时刻进行比较替换，那么在这个时间差内回导致数据的变化。比如一个线程1从内存位置V中取出A，这个时候另一个线程2也从内存中取出A，并且线程2进行了一些操作将值变成了B，然后线程2又将V位置的数据变成A，这时候线程1进行CAS操作发现内存中数据仍然是A，线程1操作成功。
 
-**ABA问题代码演示**
+#### ABA问题演示
 
 ```java
 public static void main(String[] args) throws Exception {
@@ -395,9 +395,9 @@ true  BBB  atomic value is 9999
 
 
 
-**ABA问题的解决**
+#### ABA问题的解决
 
-需要借助**AtomicStampedReference**类，解决方案类似于乐观锁的版本号机制。
+需要借助**AtomicStampedReference**类，解决方案类似于乐观锁的版本号机制。每次修改的时候版本号都要变化，每次比较的时候不仅需要比较值还需要比较版本号。
 
 ```java
  public static void main(String[] args) throws Exception {
@@ -448,7 +448,7 @@ DDD 修改成功否 false
 
 ```
 
->  参考资料
+>  参考资料    
 
 https://www.jianshu.com/p/f74044782927
 
