@@ -49,7 +49,6 @@ class MyData{
     public void addTo60(){
         this.value = 60;
     }
-
 }
 
 public class VolatileDemo {
