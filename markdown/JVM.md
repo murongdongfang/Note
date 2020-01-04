@@ -6,9 +6,9 @@ JVM的内存结构
 
 ![](img/JVM内存结构.png)
 
-![](img/1.6JVM.png)
+![](img/JDK1.6.png)
 
-![](img/1.8JVM.png)
+![](img/JDK1.8.png)
 
 ### 程序计数器
 
@@ -63,6 +63,8 @@ JDK 1.8 的时候，方法区（HotSpot 的永久代）被彻底移除了（JDK1
 ```
 -XX:MetaspaceSize=N //设置 Metaspace 的初始（和最小大小）
 -XX:MaxMetaspaceSize=N //设置 Metaspace 的最大大小
+
+
 ```
 
 与永久代很大的不同就是，如果不指定大小的话，随着更多类的创建，虚拟机会耗尽所有可用的系统内存。
@@ -99,4 +101,52 @@ JDK1.4 中新加入的 **NIO(New Input/Output) 类**，引入了一种基于**�
 + 复制算法
 + 标记清除
 + 标记清除整理（简称标记整理）
+
+
+
+```
+
+堆内存参数 -Xmx8m
+栈内存参数 -Xss256k
+
+-XX:PermSize=N //方法区 (永久代) 初始大小
+-XX:MaxPermSize=N //方法区 (永久代) 最大大小,超过这个值将会抛出 OutOfMemoryError 异常:java.lang.OutOfMemoryError: PermGen
+
+
+jsp：查看java线程id
+jstack：查看java线程资源占用情况，排除死锁
+	
+jmap：查看某一时刻java堆内存使用详情
+	jmap -heap 1817
+jconsole：图形化，连续监控java堆内存的使用情况
+jvisualvm：图形化，监控内存使用
+```
+
+方法区，永久区以及元空间三者之间的联系
+
+方法区是JVM规范中的一部分，jdk1.8以前采用的是永久区的实现。永久区逻辑上属于堆内存的一部分，常量池位于永久区中。jdk1.8以后采用的是元空间（Meta Space）实现，元空间位于本地内存，常量池位于堆内存中。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
