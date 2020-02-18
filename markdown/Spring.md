@@ -5,3 +5,8 @@ BeanFactory：bean创建的方式的抽象接口。
 BeanFactoryPostProcessor：动态修改创建bean的factory工厂信息的接口
 
 BeanDefinition：保存Bean信息的对象
+
+
+
+
+
