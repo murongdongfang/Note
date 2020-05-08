@@ -24,8 +24,6 @@ Path路径配置
 
 ![image-20200508121841210](Idea+Gradle编译Spring5.1.x源码.assets/image-20200508121841210.png)
 
-说一说安装这个aspectj的作用：
-
 
 
 
@@ -80,6 +78,8 @@ Path路径配置
 
 # 编译源码
 
+## 编译前准备
+
 编译源码之前需要做两个准备，如果需要完整编译源码需要进行下面两个设置
 
 设置虚拟机参数，防止发生OOM，`xml -XX:MaxPermSize=2048m -Xmx2048m -XX:MaxHeapSize=2048m`
@@ -90,7 +90,21 @@ Path路径配置
 
 ![image-20200508172634476](Idea+Gradle编译Spring5.1.x源码.assets/image-20200508172634476.png)
 
-##  编译aspect模块
+
+
+编译译整个源码之前要先编译spring-core和spring-oxm模块
+
+> `spring-core` and `spring-oxm` should be pre-compiled due to repackaged dependencies. 
+
+编译的这两个模块的方法就是运行相应gradle文件下面的compileTestJava任务
+
+> 1. Precompile `spring-oxm` with `./gradlew :spring-oxm:compileTestJava`
+
+
+
+
+
+## 编译aspect模块
 
 编译aspect模块的时候发现出错，由于aspect模块需要引入aspect的支持。稍显麻烦，因此干脆一不做二不休直接把这个模块移除。
 
@@ -136,14 +150,6 @@ Path路径配置
 ![image-20200508123937432](Idea+Gradle编译Spring5.1.x源码.assets/image-20200508123937432.png)
 
 
-
-编译整个源码之前要先编译spring-core和spring-oxm模块
-
-> `spring-core` and `spring-oxm` should be pre-compiled due to repackaged dependencies. 
-
-编译的这两个模块的方法就是运行相应gradle文件下面的compileTestJava任务
-
-> 1. Precompile `spring-oxm` with `./gradlew :spring-oxm:compileTestJava`
 
 
 
