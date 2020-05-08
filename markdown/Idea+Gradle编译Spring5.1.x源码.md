@@ -112,6 +112,12 @@ Path路径配置
 
 > `spring-aspects` does not compile due to references to aspect types unknown to IntelliJ IDEA. See https://youtrack.jetbrains.com/issue/IDEA-64446 for details. In the meantime, the 'spring-aspects' can be excluded from the project to avoid compilation errors.
 
+
+
+<img src="Idea+Gradle编译Spring5.1.x源码.assets/image-20200508222659693.png" alt="image-20200508222659693" style="zoom:80%;" />
+
+
+
 ![image-20200508170550534](Idea+Gradle编译Spring5.1.x源码.assets/image-20200508170550534.png)
 
 
