@@ -14,7 +14,7 @@
 
 # 基于BIO实现网络通信
 
-![](img/BIO.png)
+![](https://gitee.com/little_broken_child_9527/images/raw/master/20200517225910.png)
 
 ## 客户端
 
@@ -134,7 +134,7 @@ public class Server {
 
 # NIO
 
-![](img/NIO.png)
+![](https://gitee.com/little_broken_child_9527/images/raw/master/20200517225911.png)
 
 
 
@@ -142,11 +142,11 @@ public class Server {
 
 # IO多路复用
 
-![](img/IO多路复用.png)
+![](https://gitee.com/little_broken_child_9527/images/raw/master/20200517225912.png)
 
 
 
 # AIO
 
-![](img/AIO.png)
+![](https://gitee.com/little_broken_child_9527/images/raw/master/20200517225913.png)
 
