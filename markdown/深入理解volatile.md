@@ -5,7 +5,7 @@
 
 我们知道在计算机中执行速度：CPU高速缓存>内存>外存，由于CPU访问内存有很大的时间开销，因此CPU对于内存中数据的操作不是直接操作内存中的数据，而是先把内存中的数据复制一份到CPU内部的高速缓存中，计算完毕之后再把数据写回到主存中。在多线程下这样可能带来缓存不一致问题，例如线程1和线程2都先后访问同一个共享变量（把主存中的变量复制到自己工作内存空间），线程1对于数据进行操作后在把数据写回主存，但是线程2并没有感知到主存中的数据发生变化，导致线程2中的缓存失效。
 
-![](img/缓存一致性.png)
+![](https://picgo-markdown.oss-cn-beijing.aliyuncs.com/img/缓存一致性.png)
 
 
 
@@ -24,7 +24,7 @@
 
 由于JVM运行程序的实体是线程，而每个线程创建时JVM都会为其创建一个工作内存（有些地方称为栈空间，类似于前面所讲CPU高速缓存），工作内存是每个线程的私有数据区域，而Java内存模型中规定所有的变量都存储再主内存中，主内存是共享内存区域，所有线程都可以访问，但是线程对变量的操作（读取赋值）必须要在工作内存中进行，**首先要将变量从主内存中拷贝到自己的工作内存空间，然后再将变量写回到主内存，**不能直接操作主内存中的变量，各个线程中的工作内存存储主内存的变量副本拷贝，**因此不同的线程间无法访问对方的工作内存**，线程之间的通信（传值）必须通过主内存完成。如下图：
 
-![](img/JMM模型.png)
+![](https://picgo-markdown.oss-cn-beijing.aliyuncs.com/img/JMM模型.png)
 
 
 
@@ -175,9 +175,9 @@ public class ValatileDemo2 {
 
 以上文字用图形表示就是下图
 
-![](img/非原子性示意图.png)
+![](https://picgo-markdown.oss-cn-beijing.aliyuncs.com/img/非原子性示意图.png)
 
-
+![image-20200513120109625](https://picgo-markdown.oss-cn-beijing.aliyuncs.com/img/指令重排序.png)
 
 **大家是不是有这样的疑问**：“线程A在读取value为0后被阻塞了，没有进行修改所以不会去通知其他线程，此时线程2拿到的还是0，这点可以理解。但是后来线程2修改了value变成1后写回主内存，这下是修改了，线程1再次运行时，难道不会去主存中获取最新的值吗？按照volatile的定义，如果volatile修饰的变量发生了变化，其他线程应该去主存中拿变化后的值才对啊？”
  
@@ -208,9 +208,9 @@ public class ValatileDemo2 {
 
 
 
-![](img/指令重排序.png)
+![](https://picgo-markdown.oss-cn-beijing.aliyuncs.com/img/image-20200513120109625.png)
 
-![1571502494616](img/1571502494616.png)
+![1571502494616](https://picgo-markdown.oss-cn-beijing.aliyuncs.com/img/1571502494616.png)
 
 
 
@@ -323,7 +323,7 @@ public class Instance {
 
 我们假设线程 A 先执行 getInstance() 方法，当执行完指令 2 时恰好发生了线程切换，切换到了线程 B 上；如果此时线程 B 也执行 getInstance() 方 法，那么线程 B 会发现instance != null，所以直接返回 instance，而此时的 instance 是没有初始化过的，如果我们这个时候访问 instance 的成员变量就可能触发空 指针异常。
 
-![](img/指令重排与双端检锁.png)
+![](https://picgo-markdown.oss-cn-beijing.aliyuncs.com/img/指令重排与双端检锁.png)
 
 线程A进入第二个判空条件，进行初 始化时，发生了时间片切换，即使没有释放锁，线程B刚要进入第一个判空条件时，发现 条件不成立，直接返回instance引用，不用去获取锁。
 
