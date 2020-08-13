@@ -51,7 +51,7 @@ ribbon 单独依赖
 
 
 
-**Ribbon+RestTemplate**
+
 
 **RestTemplate的getForEntity和getForEntity方法的区别**
 
@@ -81,19 +81,94 @@ ribbon 单独依赖
 
 #  Ribbon负载均衡算法
 
-IRule:根据特定算法从服务列表中选取一个要访问的服务
+IRule接口是Ribbon所有负载均衡算法的父接口，以下是IRule接口的类图
 
-![image-20200527210002978](https://gitee.com/little_broken_child_9527/images/raw/master/20200527210006.png)
+![image-20200528152346742](https://gitee.com/little_broken_child_9527/images/raw/master/20200528152355.png)
+
+以下是Ribbon其他自带的轮询算法，根据特定算法从服务列表中选取一个要访问的服务
+
++ com.netflix.loadbalancer.RoundRobinRule：轮询
++ com.netflix.loadbalancer.RandomRule：随机
++ com.netflix.loadbalancer.RetryRule：先按照RoundRobinRule的策略获取服务,如果获取服务失败则在指定时间内进行重试,获取可用的服务
++ WeightedResponseTimeRule：对RoundRobinRule的扩展,响应速度越快的实例选择权重越多大,越容易被选择
++ BestAvailableRule：会先过滤掉由于多次访问故障而处于断路器跳闸状态的服务,然后选择一个并发量最小的服务
++ AvailabilityFilteringRule：先过滤掉故障实例,再选择并发较小的实例
++ ZoneAvoidanceRule：默认规则,复合判断server所在区域的性能和server的可用性选择服务器
+
+
 
 
 
 # 切换默认负载均衡算法
 
+==Ribbon+RestTemplate实现客户端负载均衡算法==
 
+1. 编写负载均衡算法加入容器中，**必须特别注意这个配置类不能放置在**`@components`**扫描的包及其子包。否则自定义的Ribbon负载均衡算法就会被所有的客户端共享，不能达到定制化的目的**，SpringBoot启动默认扫描启动类所在的包以及所有的子包。
+
+```java
+@Configuration
+public class MyRule {
+    @Bean
+    public IRule myRule() {
+        //使用Ribbon自带的随机算法
+        return new RandomRule();
+    }
+}
+```
+
+2. 在RestTemplate上标注使用负载均衡
+
+```java
+ //将RestTemplate注入容器中，微服务远程调用的时候使用
+  @Bean
+  @LoadBalanced
+  public RestTemplate restTemplate(){
+    return new RestTemplate();
+  }
+```
+
+
+
+2. 在具体的微服务主启动上标注`@RibbonClient(name = "CLOUD-PAYMENT-PROVIDER-8001",configuration = MyRule.class)`，里边配置这个微服务要使用的Ribbon均衡算法
+
+```java
+@SpringBootApplication
+@EnableEurekaClient
+//name:填写当前消费者所调用的生产者的微服务名，configuration：负载均衡算法的配置类
+@RibbonClient(name = "CLOUD-PAYMENT-PROVIDER-8001",configuration = MyRule.class)
+public class App_order_80 {
+  public static void main(String[] args) {
+    SpringApplication.run(App_order_80.class,args);
+  }
+}
+```
 
 
 
 
 
 # 自定义负载均衡算法
+
+负载均衡算法：rest接口第几次请求数%服务器集群总数量=实际调用服务器位置下标，每次服务重启动后rest接口计数从1开始。通过`DiscoveryClient类`来获得生产者集群的信息`List <ServiceInstance> instances = discoveryClient. getInstances("CLOUD- PAYMENT -SERVICE');`
+如: List [0] instances = 127.0.0.1:8002
+		List [1] instances = 127.0.0.1:8001
+
+8001+ 8002组合成为集群，它们共计2台机器，集群总数为2，按照轮询算法原理:
+当总请求数为1时: 1 %2 =1对应下标位置为1，则获得服务地址为127.0.0.1:8001
+当总请求数位2时: 2 %2 =0对应下标位置为0，则获得服务地址为127.0.0.1:8002
+当总请求数位3时: 3 %2 =1对应下标位置为1 ,则获得服务地址为127.0.0.1:8001
+当总请求数位4时: 4 %2 =0对应下标位置为0，则获得服务地址为127.0.0.1:8002
+如此类推....
+
+
+
+
+
+
+
+
+
+
+
+
 
